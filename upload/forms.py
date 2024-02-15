@@ -1,16 +1,13 @@
 from django import forms
+from .models import Album,Document
 
-from .models import PhotoList,DocumentList
-
-
-class PhotoListForm(forms.ModelForm):
-
+class AlbumForm(forms.ModelForm):
     class Meta:
-        model   = PhotoList
-        fields  = ['photo']
+        model	= Album
+        fields	= [ "photo" ]
 
-class DocumentListForm(forms.ModelForm):
-
+class DocumentForm(forms.ModelForm):
     class Meta:
-        model   = DocumentList
-        fields  = ['document']
+        model	= Document
+        fields	= [ "file" ]
+

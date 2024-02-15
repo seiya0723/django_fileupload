@@ -1,65 +1,68 @@
 from django.shortcuts import render,redirect
-
-# Create your views here.
 from django.views import View
-from .models import PhotoList,DocumentList
-from .forms import PhotoListForm,DocumentListForm
+
+from .models import Album,Document
+from .forms import AlbumForm,DocumentForm
 
 import magic
 
 ALLOWED_MIME    = [ "application/pdf" ]
 
-class PhotoView(View):
+class AlbumView(View):
 
     def get(self, request, *args, **kwargs):
 
-        data    = PhotoList.objects.all()
-        form    = PhotoListForm()
+        context             = {}
+        context["albums"]   = Album.objects.all()
 
-        context = { "data":data,
-                    "form":form,
-                    }
-
-        return render(request,"upload/index.html",context)
+        return render(request,"upload/album.html",context)
 
     def post(self, request, *args, **kwargs):
 
-        form    = PhotoListForm(request.POST, request.FILES)
+        form    = AlbumForm(request.POST, request.FILES)
         
-        if form.is_valid():
-            print("バリデーションOK")
-            form.save()
+        if not form.is_valid():
+            print("バリデーションNG")
+            print(form.errors)
+            return redirect("upload:album")
 
-        return redirect("upload:index")
+        print("バリデーションOK")
+        form.save()
 
-index       = PhotoView.as_view()
+        return redirect("upload:album")
+
+album   = AlbumView.as_view()
 
 class DocumentView(View):
 
     def get(self, request, *args, **kwargs):
 
-        data    = DocumentList.objects.all()
-        form    = DocumentListForm()
-        context = { "data":data,
-                    "form":form,
-                    }
+        context                 = {}
+        context["documents"]    = Document.objects.all()
 
         return render(request,"upload/document.html",context)
 
     def post(self, request, *args, **kwargs):
 
-        form        = DocumentListForm(request.POST,request.FILES)
-        mime_type   = magic.from_buffer(request.FILES["document"].read(1024) , mime=True)
+        form        = DocumentForm(request.POST,request.FILES)
 
-        if form.is_valid():
-            print("バリデーションOK")
+        if not form.is_valid():
+            print("バリデーションNG")
+            print(form.errors)
+            return redirect("upload:document")
 
-            if mime_type in ALLOWED_MIME:
-                form.save()
-            else:
-                print("このファイルは許可されていません。")
+        mime_type   = magic.from_buffer(request.FILES["file"].read(1024) , mime=True)
+        
+        if not mime_type in ALLOWED_MIME:
+            print("このファイルのMIMEは許可されていません。")
+            print(mime_type)
+            return redirect("upload:document")
 
+
+        print("バリデーションOK")
+        form.save()
 
         return redirect("upload:document")
 
 document    = DocumentView.as_view()
+

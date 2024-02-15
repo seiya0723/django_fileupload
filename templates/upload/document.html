@@ -10,17 +10,17 @@
     <h1 class="bg-primary text-center text-white">ファイルアップロードのテスト</h1>
     <main class="container">
     
-        <p><a href="{% url 'upload:index' %}">画像のアップロードはこちら</a></p>
+        <p><a href="{% url 'upload:album' %}">画像のアップロードはこちら</a></p>
 
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.document }}
+            <input type="file" name="file">
             <input class="form-control" type="submit" value="送信">
         </form>
     
-        {% for content in data %}
+        {% for document in documents %}
         <div class="my-2">
-            <a href="/media/{{ content.document }}">{{ content.document }}</a>
+            <a href="{{ document.file.url }}">{{ document.file }}</a>
         </div>
         {% endfor %}
 

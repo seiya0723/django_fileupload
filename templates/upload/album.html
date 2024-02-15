@@ -16,19 +16,17 @@
 
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.photo }}
+            <input type="file" name="photo">
             <input class="form-control" type="submit" value="送信">
         </form>
 
-
-        {% for content in data %}
+        {% for album in albums %}
         <div class="my-2">
-            <img class="img-fluid" src="/media/{{ content.photo }}" alt="投稿された画像">
+            <img class="img-fluid" src="{{ album.photo.url }}" alt="投稿された画像">
         </div>
         {% endfor %}
     
     </main>
-
 
 </body>
 </html>
